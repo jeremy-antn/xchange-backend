@@ -1,3 +1,4 @@
+const bcrypt = require('bcrypt');
 const Student = require('../models/studentModel');
 
 // Contrôleur pour la création d'un nouvel étudiant
@@ -11,12 +12,15 @@ exports.createStudent = async (req, res, next) => {
       return res.status(400).json({ message: 'Email already exists' });
     }
 
-    // Créer un nouvel étudiant
+    // Chiffrer le mot de passe
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Créer un nouvel étudiant avec le mot de passe chiffré
     const newStudent = new Student({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
     });
 
     // Enregistrer l'étudiant dans la base de données
