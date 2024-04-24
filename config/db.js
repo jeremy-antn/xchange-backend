@@ -2,11 +2,13 @@
 
 const mongoose = require('mongoose');
 
+require('dotenv').config(); // Import de dotenv et chargement des variables d'environnement
+
 // Function to connect to the database
 async function connectDB() {
   try {
     // Connect to MongoDB
-    await mongoose.connect('mongodb://localhost:27017/xchange');
+    await mongoose.connect(process.env.MONGODB_URI);
 
     console.log('MongoDB connected');
   } catch (error) {

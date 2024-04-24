@@ -6,7 +6,8 @@ const studentSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  modules: [String]
+  studentGroup: { type: String, default: '' },
+  modules: { type: [String], default: [] }
 });
 
 // Modèle d'étudiant
