@@ -1,5 +1,3 @@
-// Contrôleurs (studentController.js)
-
 const bcrypt = require('bcrypt');
 const Student = require('../models/studentModel');
 
@@ -41,7 +39,7 @@ exports.createStudent = async (req, res, next) => {
 // Récupérer tous les étudiants
 exports.getStudents = async (req, res, next) => {
   try {
-    const students = await Student.find({}, '-password');
+    const students = await Student.find({}, '-password -__v');
     res.status(200).json(students);
   } catch (error) {
     next(error);
@@ -51,7 +49,7 @@ exports.getStudents = async (req, res, next) => {
 // Récupérer un étudiant par son ID
 exports.getStudentById = async (req, res, next) => {
   try {
-    const student = await Student.findById(req.params.id, '-password');
+    const student = await Student.findById(req.params.id, '-password -__v');
     if (!student) {
       return res.status(404).json({ message: 'Student not found' });
     }
@@ -71,7 +69,7 @@ exports.updateStudent = async (req, res, next) => {
       email,
       studentGroup,
       modules
-    }, { new: true });
+    }, { new: true, select: '-password -__v' });
     if (!updatedStudent) {
       return res.status(404).json({ message: 'Student not found' });
     }
@@ -88,7 +86,7 @@ exports.deleteStudent = async (req, res, next) => {
     if (!deletedStudent) {
       return res.status(404).json({ message: 'Student not found' });
     }
-    res.status(200).json({ message: 'Student deleted successfully', student: deletedStudent });
+    res.status(200).json({ message: 'Student deleted successfully'});
   } catch (error) {
     next(error);
   }

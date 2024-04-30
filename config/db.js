@@ -1,5 +1,3 @@
-// config/db.js
-
 const mongoose = require('mongoose');
 
 require('dotenv').config(); // Import de dotenv et chargement des variables d'environnement
