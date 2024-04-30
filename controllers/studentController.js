@@ -1,21 +1,20 @@
+// Contrôleurs (studentController.js)
+
 const bcrypt = require('bcrypt');
 const Student = require('../models/studentModel');
 
-// Contrôleur pour la création d'un nouvel étudiant
+// Créer un nouvel étudiant
 exports.createStudent = async (req, res, next) => {
   try {
     const { firstName, lastName, email, password } = req.body;
 
-    // Vérifier si l'email est déjà utilisé
     const existingStudent = await Student.findOne({ email });
     if (existingStudent) {
       return res.status(400).json({ message: 'Email already exists' });
     }
 
-    // Chiffrer le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Créer un nouvel étudiant avec le mot de passe chiffré
     const newStudent = new Student({
       firstName,
       lastName,
@@ -23,22 +22,74 @@ exports.createStudent = async (req, res, next) => {
       password: hashedPassword,
     });
 
-    // Enregistrer l'étudiant dans la base de données
     await newStudent.save();
 
-    // Supprimer les champs _id et __v de la réponse
     const studentResponse = newStudent.toObject();
     delete studentResponse.password;
     delete studentResponse._id;
     delete studentResponse.__v;
 
-    // Réponse réussie
     res.status(201).json({
       message: 'Student account created successfully.',
       student: studentResponse
     });
   } catch (error) {
-    // Gérer les erreurs
+    next(error);
+  }
+};
+
+// Récupérer tous les étudiants
+exports.getStudents = async (req, res, next) => {
+  try {
+    const students = await Student.find({}, '-password');
+    res.status(200).json(students);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Récupérer un étudiant par son ID
+exports.getStudentById = async (req, res, next) => {
+  try {
+    const student = await Student.findById(req.params.id, '-password');
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.status(200).json(student);
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Mettre à jour les infos d'un étudiant
+exports.updateStudent = async (req, res, next) => {
+  try {
+    const { firstName, lastName, email, studentGroup, modules } = req.body;
+    const updatedStudent = await Student.findByIdAndUpdate(req.params.id, {
+      firstName,
+      lastName,
+      email,
+      studentGroup,
+      modules
+    }, { new: true });
+    if (!updatedStudent) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.status(200).json({ message: 'Student updated successfully', student: updatedStudent });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Supprimer un étudiant
+exports.deleteStudent = async (req, res, next) => {
+  try {
+    const deletedStudent = await Student.findByIdAndDelete(req.params.id);
+    if (!deletedStudent) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+    res.status(200).json({ message: 'Student deleted successfully', student: deletedStudent });
+  } catch (error) {
     next(error);
   }
 };
