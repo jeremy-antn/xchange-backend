@@ -14,7 +14,7 @@ router.get('/students', studentController.getStudents);
 router.get('/students/:id', studentController.getStudentById);
 
 // Route pour mettre à jour les infos d'un étudiant
-router.put('/students/:id', studentController.updateStudent);
+router.put('/students/:id', validateUserInput, studentController.updateStudent);
 
 // Route pour delete un étudiant
 router.delete('/students/:id', studentController.deleteStudent);
