@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const connectDB = require('./config/db'); // Import de la fonction de connexion à la base de données
 const studentRoutes = require('./routes/studentRoutes'); // Import des routes liées aux étudiants
 const teacherRoutes = require('./routes/teacherRoutes'); // Import des routes liées aux professeurs
@@ -9,6 +10,9 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
+
+// Allow requests from all origins
+app.use(cors());
 
 // Connexion à la base de données
 connectDB();
