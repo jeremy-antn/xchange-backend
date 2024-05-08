@@ -18,4 +18,8 @@ router.put('/teachers/:id', validateUserInput, teacherController.updateTeacher);
 // Route pour delete un étudiant
 router.delete('/teachers/:id', teacherController.deleteTeacher);
 
+// Route pour créer un nouveau module pour un professeur
+router.post('/teachers/modules', teacherController.createModuleForTeacher);
+
+
 module.exports = router;

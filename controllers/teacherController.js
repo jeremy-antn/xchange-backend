@@ -93,3 +93,32 @@ exports.deleteTeacher = async (req, res, next) => {
     next(error);
   }
 };
+
+// Créer un nouveau module pour un professeur
+exports.createModuleForTeacher = async (req, res, next) => {
+  try {
+    const { _id } = req.query; // Extract teacherId from query params
+    const { moduleName, description } = req.body;
+
+    // Find the teacher by ID
+    const teacher = await Teacher.findById(_id);
+    if (!teacher) {
+      return res.status(404).json({ message: 'Teacher not found' });
+    }
+
+    // Add the module to the teacher's modules array
+    teacher.modules.push({ moduleName, description });
+    await teacher.save();
+
+    // Get the newly added module
+    const newModule = teacher.modules[teacher.modules.length - 1];
+
+    res.status(201).json({
+      id: newModule._id, // Assuming MongoDB auto-generates IDs
+      moduleName: newModule.moduleName,
+      description: newModule.description,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
