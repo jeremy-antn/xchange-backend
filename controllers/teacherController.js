@@ -30,7 +30,7 @@ exports.createTeacher = async (req, res, next) => {
   
       res.status(201).json({
         message: 'Teacher account created successfully.',
-        student: teacherResponse
+        teacher: teacherResponse
       });
     } catch (error) {
       next(error);
@@ -40,7 +40,7 @@ exports.createTeacher = async (req, res, next) => {
 // Récupérer tous les professeurs
 exports.getTeachers = async (req, res, next) => {
   try {
-    const teachers = await Teacher.find({}, '-password -__v');
+    const teachers = await Teacher.find({}, '-password').select('-__v'); // Exclude password field from the query
     res.status(200).json(teachers);
   } catch (error) {
     next(error);

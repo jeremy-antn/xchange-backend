@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const { connectToTestDB, disconnectFromTestDB } = require('../tests/utils/testUtils'); // Import test utilities
 
 let mongoServer;
 
@@ -8,9 +8,7 @@ async function connectDB() {
   try {
     if (!mongoose.connection.readyState) {
       // Check if connection is not already established
-      mongoServer = await MongoMemoryServer.create();
-      const mongoUri = mongoServer.getUri();
-      await mongoose.connect(mongoUri, { useNewUrlParser: true, useUnifiedTopology: true });
+      await connectToTestDB(); // Connect to the test database
       console.log('MongoDB connected');
     }
   } catch (error) {
@@ -21,8 +19,7 @@ async function connectDB() {
 
 // Teardown function to stop MongoDB instance
 async function disconnectDB() {
-  await mongoose.disconnect();
-  await mongoServer.stop();
+  await disconnectFromTestDB(); // Disconnect from the test database
 }
 
 beforeAll(async () => {
@@ -33,7 +30,7 @@ afterAll(async () => {
   await disconnectDB();
 });
 
-describe('Database Connection', () => {
+describe('Database Connection', () => { 
   it('connects to the database', async () => {
     // Act
     await connectDB();
@@ -41,10 +38,5 @@ describe('Database Connection', () => {
     // Assert
     expect(mongoose.connection.readyState).toBe(1); // Connection ready state is 1 for connected
 
-    // Query database or check for expected data
-    // For example:
-    // const SomeModel = mongoose.model('SomeModel', new mongoose.Schema({ name: String }));
-    // const doc = await SomeModel.findOne({ name: 'example' });
-    // expect(doc).toBeNull(); // Assuming there's no such document, just to demonstrate querying
   });
 });

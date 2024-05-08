@@ -47,3 +47,15 @@ npm install
 ### Création des fichiers dans la racine du projet
 
 - .env
+
+### Démarrage de l'API
+
+```bash
+npm start
+```
+
+### Lancement des tests avec jest
+
+```bash
+npm test
+```
