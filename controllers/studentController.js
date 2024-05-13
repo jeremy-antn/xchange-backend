@@ -91,3 +91,29 @@ exports.deleteStudent = async (req, res, next) => {
     next(error);
   }
 };
+
+// Créer de nouveaux modules pour un professeur
+exports.createModulesForStudent = async (req, res, next) => {
+  try {
+    const { _id } = req.query; // Extract studentId from query params
+    const modulesData = req.body.modules; // Array of modules from request body
+
+    // Find the student by ID
+    const student = await Student.findById(_id);
+    if (!student) {
+      return res.status(404).json({ message: 'Student not found' });
+    }
+
+    // Add modules to the student's modules array
+    const newModules = modulesData.map(({ moduleName, description }) => ({ moduleName, description }));
+    student.modules.push(...newModules);
+    await student.save();
+
+    res.status(201).json({
+      message: 'Modules created successfully',
+      modules: newModules,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

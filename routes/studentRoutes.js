@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const studentController = require('../controllers/studentController');
-const validateUserInput = require('../middleware/userValidation'); // Import the student validation middleware
+const {validateUserInput, checkUniqueModuleName} = require('../middleware/userValidation'); // Import the student validation middleware
 
 
 // Route pour créer un nouvel étudiant
@@ -18,5 +18,8 @@ router.put('/students/:id', validateUserInput, studentController.updateStudent);
 
 // Route pour delete un étudiant
 router.delete('/students/:id', studentController.deleteStudent);
+
+// Route pour créer un nouveau module pour un professeur
+router.post('/students/modules', checkUniqueModuleName('student'), studentController.createModulesForStudent);
 
 module.exports = router;
