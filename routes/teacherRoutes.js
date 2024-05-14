@@ -24,11 +24,11 @@ router.post('/teachers/modules', checkUniqueModuleName('teacher'), teacherContro
 // Route pour récupérer tous les modules d'un professeur
 router.get('/teachers/modules/:teacherId', teacherController.getModulesForTeacher);
 
-/* // GET - Récupérer un module spécifique d'un professeur
-router.get('/teachers/modules/:moduleId', teacherController.getModuleForTeacher); */
+// Récupérer un module spécifique d'un professeur 1
+router.get('/teachers/:teacherId/modules/:moduleId', teacherController.getModuleForTeacher);
 
-/* // Route pour mettre à jour les détails d'un module pour un professeur par son ID
-router.put('/teachers/modules/:teacherId/:moduleId', teacherController.updateModuleForTeacher); */
+// Route pour mettre à jour les détails d'un module pour un professeur par son ID
+router.put('/teachers/:teacherId/modules/:moduleId', teacherController.updateModuleForTeacher);
 
 
 module.exports = router;

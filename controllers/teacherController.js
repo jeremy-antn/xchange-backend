@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const Teacher = require('../models/teacherModel');
+const teacherUtils = require('../utils/teacherUtils');
 
 // Créer un nouveau professeur
 exports.createTeacher = async (req, res, next) => {
@@ -104,13 +105,10 @@ exports.createModulesForTeacher = async (req, res, next) => {
     const { userId } = req.query; // Extract teacherId from query params
     const modulesData = req.body.modules; // Array of modules from request body
 
-    // Find the teacher by ID
-    const teacher = await Teacher.findById(userId);
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
+    // Utiliser la fonction utilitaire pour trouver le professeur par ID
+    const teacher = await teacherUtils.findTeacherById(userId);
 
-    // Add modules to the teacher's modules array
+    // Ajouter des modules au tableau de modules du professeur
     const newModules = modulesData.map(({ moduleName, description }) => ({ moduleName, description }));
     teacher.modules.push(...newModules);
     await teacher.save();
@@ -128,11 +126,10 @@ exports.createModulesForTeacher = async (req, res, next) => {
 exports.getModulesForTeacher = async (req, res, next) => {
   try {
     const teacherId = req.params.teacherId; // Récupérer l'ID du professeur depuis les paramètres de la requête
-    const teacher = await Teacher.findById(teacherId);
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
-    
+
+    // Utiliser la fonction utilitaire pour trouver le professeur par ID
+    const teacher = await teacherUtils.findTeacherById(teacherId);
+
     // Récupérer uniquement les modules du professeur
     const modules = teacher.modules.map(({ moduleName, description, _id }) => ({
       moduleName,
@@ -151,19 +148,16 @@ exports.getModulesForTeacher = async (req, res, next) => {
   }
 };
 
-/* // Récupérer un module spécifique d'un professeur
+// Récupérer un module spécifique d'un professeur 1
 exports.getModuleForTeacher = async (req, res, next) => {
   try {
-    const teacherId = req.query.teacherId; // Récupérer l'ID du professeur depuis les query params de la requête
-    const moduleId = req.params.moduleId; // Récupérer l'ID du module depuis les paramètres de la requête
+    const { teacherId, moduleId } = req.params;
 
-    const teacher = await Teacher.findById(teacherId);
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
+    // Utiliser la fonction utilitaire pour trouver le professeur par ID
+    const teacher = await teacherUtils.findTeacherById(teacherId);
 
     // Trouver le module spécifique du professeur
-    const module = teacher.modules.find(module => module._id.toString() === moduleId);
+    const module = teacher.modules.find(m => m._id.toString() === moduleId);
     if (!module) {
       return res.status(404).json({ message: 'Module not found for this teacher' });
     }
@@ -177,19 +171,16 @@ exports.getModuleForTeacher = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-}; */
+};
 
-/* // Mettre à jour les détails d'un module pour un professeur
+// Mettre à jour les détails d'un module pour un professeur
 exports.updateModuleForTeacher = async (req, res, next) => {
   try {
     const { teacherId, moduleId } = req.params; // Récupérer les IDs du professeur et du module depuis les paramètres de la requête
     const { moduleName, description } = req.body; // Récupérer les nouveaux détails du module depuis le corps de la requête
 
-    // Vérifier si le professeur existe
-    const teacher = await Teacher.findById(teacherId);
-    if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
-    }
+    // Utiliser la fonction utilitaire pour trouver le professeur par ID
+    const teacher = await teacherUtils.findTeacherById(teacherId);
 
     // Vérifier si le module existe pour ce professeur
     const moduleToUpdate = teacher.modules.find(module => module._id.toString() === moduleId);
@@ -204,8 +195,14 @@ exports.updateModuleForTeacher = async (req, res, next) => {
     // Enregistrer les modifications dans la base de données
     await teacher.save();
 
-    res.status(200).json({ message: 'Module details updated successfully' });
-  } catch (error) {
-    next(error);
-  }
-}; */
+    // Construire la réponse avec les détails du module mis à jour
+    const response = {
+      message: 'Module details updated successfully',
+      module: moduleToUpdate
+      };
+
+      res.status(200).json(response);
+      } catch (error) {
+        next(error);
+      }
+};
