@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
+app.use(express.json()); // This line adds middleware to parse JSON bodies
 
 // Connexion à la base de données
 connectDB();

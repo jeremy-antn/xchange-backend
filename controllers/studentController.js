@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt');
 const Student = require('../models/studentModel');
+const studentUtils = require('../utils/studentUtils');
+const { studentModuleController } = require('../controllers/studentModuleController');
 
 // Créer un nouvel étudiant
 exports.createStudent = async (req, res, next) => {
@@ -62,13 +64,12 @@ exports.getStudentById = async (req, res, next) => {
 // Mettre à jour les infos d'un étudiant
 exports.updateStudent = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, studentGroup, modules } = req.body;
+    const { firstName, lastName, email, studentGroup} = req.body;
     const updatedStudent = await Student.findByIdAndUpdate(req.params.id, {
       firstName,
       lastName,
       email,
-      studentGroup,
-      modules
+      studentGroup
     }, { new: true, select: '-password -__v' });
     if (!updatedStudent) {
       return res.status(404).json({ message: 'Student not found' });
@@ -87,32 +88,6 @@ exports.deleteStudent = async (req, res, next) => {
       return res.status(404).json({ message: 'Student not found' });
     }
     res.status(200).json({ message: 'Student deleted successfully'});
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Créer de nouveaux modules pour un professeur
-exports.createModulesForStudent = async (req, res, next) => {
-  try {
-    const { _id } = req.query; // Extract studentId from query params
-    const modulesData = req.body.modules; // Array of modules from request body
-
-    // Find the student by ID
-    const student = await Student.findById(_id);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
-
-    // Add modules to the student's modules array
-    const newModules = modulesData.map(({ moduleName, description }) => ({ moduleName, description }));
-    student.modules.push(...newModules);
-    await student.save();
-
-    res.status(201).json({
-      message: 'Modules created successfully',
-      modules: newModules,
-    });
   } catch (error) {
     next(error);
   }
