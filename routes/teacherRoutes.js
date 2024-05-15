@@ -42,8 +42,14 @@ router.delete('/teachers/:teacherId/modules/:moduleId', teacherModuleController.
 // Route pour récupérer les modules d'un étudiant
 router.get('/teachers/:teacherId/students/:studentId/modules', teacherStudentModuleController.getModulesForStudent);
 
+// Route to view a module for a student by a teacher
+router.get('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.getModuleForStudent);
+
 // Route to update a module for a student by a teacher
 router.put('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.updateModuleForStudent);
+
+// Route to delete a module for a student by a teacher
+router.delete('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.deleteModuleForStudent);
 
 
 module.exports = router;
