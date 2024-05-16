@@ -1,25 +1,25 @@
 const mongoose = require('mongoose');
-const { connectToTestDB, disconnectFromTestDB } = require('../tests/utils/testUtils'); // Import test utilities
+const { connectToTestDB, disconnectFromTestDB } = require('../tests/utils/testUtils'); // Importer les utilitaires de test
 
 let mongoServer;
 
-// Function to connect to MongoDB
+// Fonction pour se connecter à MongoDB
 async function connectDB() {
   try {
     if (!mongoose.connection.readyState) {
-      // Check if connection is not already established
-      await connectToTestDB(); // Connect to the test database
-      console.log('MongoDB connected');
+      // Vérifier si la connexion n'est pas déjà établie
+      await connectToTestDB(); // Se connecter à la base de données de test
+      console.log('MongoDB connecté');
     }
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error.message);
+    console.error('Erreur de connexion à MongoDB :', error.message);
     process.exit(1);
   }
 }
 
-// Teardown function to stop MongoDB instance
+// Fonction de nettoyage pour arrêter l'instance MongoDB
 async function disconnectDB() {
-  await disconnectFromTestDB(); // Disconnect from the test database
+  await disconnectFromTestDB(); // Se déconnecter de la base de données de test
 }
 
 beforeAll(async () => {
@@ -30,13 +30,12 @@ afterAll(async () => {
   await disconnectDB();
 });
 
-describe('Database Connection', () => { 
-  it('connects to the database', async () => {
-    // Act
+describe('Connexion à la base de données', () => { 
+  it('se connecte à la base de données', async () => {
+    // Action
     await connectDB();
 
-    // Assert
-    expect(mongoose.connection.readyState).toBe(1); // Connection ready state is 1 for connected
-
+    // Vérification
+    expect(mongoose.connection.readyState).toBe(1); // L'état de connexion prêt est 1 pour connecté
   });
 });

@@ -1,129 +1,129 @@
 const studentUtils = require('../utils/studentUtils');
 const teacherUtils = require('../utils/teacherUtils');
 
-// Create a module for a student
+// Créer un module pour un étudiant
 exports.createModulesForStudent = async (req, res, next) => {
   try {
     const { teacherId, studentId } = req.params;
-    const modules = req.body.modules; // Assuming modules is an array of module objects
+    const modules = req.body.modules; // Supposant que modules est un tableau d'objets de module
 
-    // Find the teacher by ID
+    // Trouver l'enseignant par ID
     const teacher = await teacherUtils.findTeacherById(teacherId);
 
-    // Find the student by ID
+    // Trouver l'étudiant par ID
     const student = await studentUtils.findStudentById(studentId);
 
-    // Add the new modules to the student's list of modules
+    // Ajouter les nouveaux modules à la liste des modules de l'étudiant
     student.modules.push(...modules);
 
-    // Save the changes
+    // Enregistrer les modifications
     await student.save();
 
-    res.status(201).json({ message: 'Modules created successfully', modules });
+    res.status(201).json({ message: 'Modules créés avec succès', modules });
   } catch (error) {
-    console.error('Error creating modules:', error);
+    console.error('Erreur lors de la création des modules :', error);
     next(error);
   }
 };
 
-// Get modules for a student
+// Obtenir les modules pour un étudiant
 exports.getModulesForStudent = async (req, res, next) => {
   try {
     const studentId = req.params.studentId;
 
-    // Find the student by ID
+    // Trouver l'étudiant par ID
     const student = await studentUtils.findStudentById(studentId);
 
     res.status(200).json({ modules: student.modules });
   } catch (error) {
-    console.error('Error fetching modules:', error);
+    console.error('Erreur lors de la récupération des modules :', error);
     next(error);
   }
 };
 
-// Get a module for a student by a teacher
+// Obtenir un module pour un étudiant par un enseignant
 exports.getModuleForStudent = async (req, res, next) => {
   try {
     const studentId = req.params.studentId;
     const moduleId = req.params.moduleId;
 
-    // Find the student by ID
+    // Trouver l'étudiant par ID
     const student = await studentUtils.findStudentById(studentId);
 
-    // Find the module for the student
+    // Trouver le module pour l'étudiant
     const module = student.modules.find(module => module.id === moduleId);
 
     if (!module) {
-      return res.status(404).json({ message: 'Module not found for the student' });
+      return res.status(404).json({ message: 'Module non trouvé pour l\'étudiant' });
     }
 
     res.status(200).json({ module });
   } catch (error) {
-    console.error('Error fetching module:', error);
+    console.error('Erreur lors de la récupération du module :', error);
     next(error);
   }
 };
 
-// Update a module for a student
+// Mettre à jour un module pour un étudiant
 exports.updateModuleForStudent = async (req, res, next) => {
   try {
     const teacherId = req.params.teacherId;
     const studentId = req.params.studentId;
     const moduleId = req.params.moduleId;
-    const updatedModules = req.body.modules; // Corrected to handle multiple modules
+    const updatedModules = req.body.modules; // Corrigé pour gérer plusieurs modules
 
-    // Find the teacher by ID (optional, depending on your requirements)
+    // Trouver l'enseignant par ID (facultatif, selon vos besoins)
     const teacher = await teacherUtils.findTeacherById(teacherId);
 
-    // Find the student by ID
+    // Trouver l'étudiant par ID
     const student = await studentUtils.findStudentById(studentId);
 
-    // Update each module
+    // Mettre à jour chaque module
     updatedModules.forEach(async updatedModule => {
-      // Check if the module exists for the student
+      // Vérifier si le module existe pour l'étudiant
       const moduleIndex = student.modules.findIndex(module => module.id === moduleId);
       if (moduleIndex === -1) {
-        return res.status(404).json({ message: 'Module not found for the student' });
+        return res.status(404).json({ message: 'Module non trouvé pour l\'étudiant' });
       }
 
-      // Update the module
+      // Mettre à jour le module
       student.modules[moduleIndex] = updatedModule;
     });
 
-    // Save the changes
+    // Enregistrer les modifications
     await student.save();
 
-    res.status(200).json({ message: 'Modules updated successfully', modules: updatedModules });
+    res.status(200).json({ message: 'Modules mis à jour avec succès', modules: updatedModules });
   } catch (error) {
-    console.error('Error updating modules:', error);
+    console.error('Erreur lors de la mise à jour des modules :', error);
     next(error);
   }
 };
 
-// Delete a module for a student by a teacher
+// Supprimer un module pour un étudiant par un enseignant
 exports.deleteModuleForStudent = async (req, res, next) => {
   try {
     const studentId = req.params.studentId;
     const moduleId = req.params.moduleId;
 
-    // Find the student by ID
+    // Trouver l'étudiant par ID
     const student = await studentUtils.findStudentById(studentId);
 
-    // Check if the module exists for the student
+    // Vérifier si le module existe pour l'étudiant
     const moduleIndex = student.modules.findIndex(module => module.id === moduleId);
     if (moduleIndex === -1) {
-      return res.status(404).json({ message: 'Module not found for the student' });
+      return res.status(404).json({ message: 'Module non trouvé pour l\'étudiant' });
     }
 
-    // Remove the module from the student's list of modules
+    // Supprimer le module de la liste des modules de l'étudiant
     student.modules.splice(moduleIndex, 1);
 
-    // Save the changes
+    // Enregistrer les modifications
     await student.save();
 
-    res.status(200).json({ message: 'Module deleted successfully' });
+    res.status(200).json({ message: 'Module supprimé avec succès' });
   } catch (error) {
-    console.error('Error deleting module:', error);
+    console.error('Erreur lors de la suppression du module :', error);
     next(error);
   }
 };

@@ -1,8 +1,8 @@
-const { updateTeacher } = require('../controllers/teacherController'); // Import the controller function directly
+const { updateTeacher } = require('../controllers/teacherController'); // Importer directement la fonction du contrôleur
 const { connectToTestDB, disconnectFromTestDB } = require('../tests/utils/testUtils');
 const Teacher = require('../models/teacherModel');
 
-// Mock request and response objects
+// Objets simulés pour la requête et la réponse
 const mockRequest = (params, body) => {
   const req = {
     params: params,
@@ -18,22 +18,22 @@ const mockResponse = () => {
 };
 
 beforeAll(async () => {
-  await connectToTestDB();
+  await connectToTestDB(); // Se connecter à la base de données de test avant tous les tests
 });
 
 afterAll(async () => {
-  await disconnectFromTestDB();
+  await disconnectFromTestDB(); // Se déconnecter de la base de données de test après tous les tests
 });
 
-describe('Teacher API', () => {
-  test('should update teacher details', async () => {
-    // Create a sample teacher in the database
+describe('API des enseignants', () => {
+  test('devrait mettre à jour les détails de l\'enseignant', async () => {
+    // Créer un enseignant exemple dans la base de données
     const teacher = new Teacher({
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
       teacherGroup: 'Mathematics',
-      password: 'password123', // Add a password to satisfy the schema validation
+      password: 'password123', // Ajouter un mot de passe pour satisfaire la validation du schéma
     });
     await teacher.save();
 
@@ -50,7 +50,7 @@ describe('Teacher API', () => {
 
     await updateTeacher(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.status).toHaveBeenCalledWith(200); // Vérifier que le statut de la réponse est 200
     expect(res.json).toHaveBeenCalledWith(expect.objectContaining({
       message: 'Teacher updated successfully',
       teacher: expect.objectContaining({
@@ -62,9 +62,9 @@ describe('Teacher API', () => {
       }),
     }));
 
-    // Ensure that the password field is not included in the response
+    // S'assurer que le champ mot de passe n'est pas inclus dans la réponse
     expect(res.json.mock.calls[0][0].teacher.password).toBeUndefined();
   });
 
-  // Add more test cases as needed
+  // Ajouter plus de cas de test si nécessaire
 });

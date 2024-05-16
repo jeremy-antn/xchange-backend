@@ -1,8 +1,8 @@
-const { deleteTeacher } = require('../controllers/teacherController'); // Import the controller function directly
+const { deleteTeacher } = require('../controllers/teacherController'); // Importer directement la fonction du contrôleur
 const { connectToTestDB, disconnectFromTestDB } = require('../tests/utils/testUtils');
 const Teacher = require('../models/teacherModel');
 
-// Mock request and response objects
+// Objets simulés pour la requête et la réponse
 const mockRequest = (params) => {
   const req = {
     params: params,
@@ -17,26 +17,26 @@ const mockResponse = () => {
 };
 
 beforeAll(async () => {
-  await connectToTestDB();
+  await connectToTestDB(); // Se connecter à la base de données de test avant tous les tests
 });
 
 afterAll(async () => {
-  await disconnectFromTestDB();
+  await disconnectFromTestDB(); // Se déconnecter de la base de données de test après tous les tests
 });
 
-describe('Teacher API', () => {
-  test('should delete teacher by ID', async () => {
-    // Create a sample teacher in the database
+describe('API des enseignants', () => {
+  test('devrait supprimer un enseignant par ID', async () => {
+    // Créer un enseignant exemple dans la base de données
     const teacher = new Teacher({
       firstName: 'John',
       lastName: 'Doe',
       email: 'john@example.com',
       teacherGroup: 'Mathematics',
-      password: 'password123', // Add a password to satisfy the schema validation
+      password: 'password123', // Ajouter un mot de passe pour satisfaire la validation du schéma
     });
     await teacher.save();
 
-    // Mock the findByIdAndDelete method to return the deleted teacher
+    // Simuler la méthode findByIdAndDelete pour retourner l'enseignant supprimé
     Teacher.findByIdAndDelete = jest.fn().mockResolvedValue(teacher);
 
     const req = mockRequest({ id: teacher._id });
@@ -44,15 +44,15 @@ describe('Teacher API', () => {
 
     await deleteTeacher(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(200);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Teacher deleted successfully' });
+    expect(res.status).toHaveBeenCalledWith(200); // Vérifier que le statut de la réponse est 200
+    expect(res.json).toHaveBeenCalledWith({ message: 'Enseignant supprimé avec succès' });
 
-    // Ensure that the findByIdAndDelete method is called with the correct teacher ID
+    // Assurer que la méthode findByIdAndDelete est appelée avec le bon ID de l'enseignant
     expect(Teacher.findByIdAndDelete).toHaveBeenCalledWith(teacher._id);
   });
 
-  test('should return 404 if teacher not found', async () => {
-    // Mock the findByIdAndDelete method to return null (teacher not found)
+  test('devrait retourner 404 si l\'enseignant n\'est pas trouvé', async () => {
+    // Simuler la méthode findByIdAndDelete pour retourner null (enseignant non trouvé)
     Teacher.findByIdAndDelete = jest.fn().mockResolvedValue(null);
 
     const req = mockRequest({ id: 'non-existent-id' });
@@ -60,9 +60,9 @@ describe('Teacher API', () => {
 
     await deleteTeacher(req, res);
 
-    expect(res.status).toHaveBeenCalledWith(404);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Teacher not found' });
+    expect(res.status).toHaveBeenCalledWith(404); // Vérifier que le statut de la réponse est 404
+    expect(res.json).toHaveBeenCalledWith({ message: 'Enseignant non trouvé' });
   });
 
-  // Add more test cases as needed
+  // Ajouter plus de cas de test si nécessaire
 });

@@ -5,69 +5,69 @@ const Student = require('../models/studentModel');
 function validateUserInput(req, res, next) {
   const { firstName, lastName, email, password, teacherGroup } = req.body;
   
-  // Check if required fields are present for both student and teacher
+  // Vérifier si les champs obligatoires sont présents pour les étudiants et les enseignants
   if (!firstName || !lastName || !email || !password) {
-    return res.status(400).json({ error: "Missing required fields" });
+    return res.status(400).json({ error: "Champs obligatoires manquants" });
   }
 
-  // Check email format
+  // Vérifier le format de l'email
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
-    return res.status(400).json({ error: "Invalid email format" });
+    return res.status(400).json({ error: "Format d'email invalide" });
   }
 
-  // Check password strength
+  // Vérifier la force du mot de passe
   if (!validatePassword(password)) {
-    return res.status(400).json({ error: "Password must be at least 8 characters long, contain at least one letter, one number, and one special character" });
+    return res.status(400).json({ error: "Le mot de passe doit comporter au moins 8 caractères, contenir au moins une lettre, un chiffre et un caractère spécial" });
   }
 
-  // Additional validation specific to teachers
+  // Validation supplémentaire spécifique aux enseignants
   if (req.url.includes('/teachers')) {
     if (!teacherGroup) {
-      return res.status(400).json({ error: "Missing teacher group" });
+      return res.status(400).json({ error: "Groupe d'enseignants manquant" });
     }
-    // Add any additional teacher-specific validation here
+    // Ajoutez ici toute validation supplémentaire spécifique aux enseignants
   }
   
-  // Move to the next middleware or route handler
+  // Passer au middleware suivant ou au gestionnaire de route
   next();
 }
 
-// Functional middleware to check if moduleName is unique for the specified role
+// Middleware fonctionnel pour vérifier si le nom du module est unique pour le rôle spécifié
 const checkUniqueModuleName = (role) => async (req, res, next) => {
   try {
-    const { userId } = req.query; // Extract userId from query params
+    const { userId } = req.query; // Extraire userId des paramètres de la requête
     const { moduleName } = req.body;
 
-    // Find the user by ID based on the role
+    // Trouver l'utilisateur par ID en fonction du rôle
     let User;
     if (role === 'teacher') {
       User = Teacher;
     } else if (role === 'student') {
       User = Student;
     } else {
-      return res.status(400).json({ message: 'Invalid role specified' });
+      return res.status(400).json({ message: 'Rôle spécifié invalide' });
     }
 
-    // Check if any module with the same name exists for the user
+    // Vérifier si un module avec le même nom existe pour l'utilisateur
     const user = await User.findById(userId);
     if (!user) {
-      return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
+      return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} introuvable` });
     }
 
     const existingModule = user.modules.find(module => module.moduleName === moduleName);
     if (existingModule) {
-      // For teacher, if module already exists, return error
+
       if (role === 'teacher') {
-        return res.status(400).json({ message: 'Module name must be unique for the user' });
+        return res.status(400).json({ message: "Le nom du module doit être unique pour l'utilisateur" });
       }
-      // For student, if module already exists, proceed to next middleware/controller
+
       else {
         return next();
       }
     }
 
-    // If moduleName is unique, proceed to the next middleware or controller
+   // Si le nom du module est unique, passer au middleware suivant ou au contrôleur
     next();
   } catch (error) {
     next(error);

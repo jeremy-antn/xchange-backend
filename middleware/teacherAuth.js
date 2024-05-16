@@ -5,23 +5,15 @@ const teacherAuthorizationMiddleware = async (req, res, next) => {
   try {
     const { teacherId, studentId } = req.params;
 
-    // Find the teacher by ID
+    // Rechercher l'enseignant par ID
     const teacher = await Teacher.findById(teacherId);
 
-    // Find the student by ID (optional, depending on your requirements)
-    // const student = await Student.findById(studentId);
-
-    // Check if the teacher exists and if the teacher is authorized
+    // Vérifier si l'enseignant existe et s'il est autorisé
     if (!teacher) {
-      return res.status(404).json({ message: 'Teacher not found' });
+      return res.status(404).json({ message: 'Enseignant non trouvé' });
     }
 
-    // You can also check if the student exists and handle accordingly
-    // if (!student) {
-    //   return res.status(404).json({ message: 'Student not found' });
-    // }
-
-    // If authorized, proceed to the next middleware or route handler
+    // Si autorisé, passer au middleware suivant ou au gestionnaire de route
     next();
   } catch (error) {
     next(error);
@@ -29,4 +21,3 @@ const teacherAuthorizationMiddleware = async (req, res, next) => {
 };
 
 module.exports = teacherAuthorizationMiddleware;
-

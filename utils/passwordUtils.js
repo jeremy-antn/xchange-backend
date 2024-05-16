@@ -1,10 +1,10 @@
 function validatePassword(password) {
-    // Password must be at least 8 characters long
+    // Le mot de passe doit contenir au moins 8 caractères
     if (password.length < 8) {
       return false;
     }
   
-    // Password must contain at least one letter, one number, and one special character
+    // Le mot de passe doit contenir au moins une lettre, un chiffre et un caractère spécial
     const letterRegex = /[a-zA-Z]/;
     const numberRegex = /[0-9]/;
     const specialCharRegex = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;

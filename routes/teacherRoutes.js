@@ -27,28 +27,28 @@ router.post('/teachers/modules', checkUniqueModuleName('teacher'), teacherModule
 // Route pour récupérer tous les modules d'un professeur
 router.get('/teachers/modules/:teacherId', teacherModuleController.getModulesForTeacher);
 
-// Récupérer un module spécifique d'un professeur 1
+// Récupérer un module spécifique d'un professeur
 router.get('/teachers/:teacherId/modules/:moduleId', teacherModuleController.getModuleForTeacher);
 
 // Route pour mettre à jour les détails d'un module pour un professeur par son ID
 router.put('/teachers/:teacherId/modules/:moduleId', teacherModuleController.updateModuleForTeacher);
 
-// Route for creating a module for a student by a teacher
+// Route pour la création d'un module pour un étudiant par un enseignant
 router.post('/teachers/:teacherId/:studentId/modules', teacherAuth,  teacherStudentModuleController.createModulesForStudent);
-
-// Route pour supprimer un module pour un professeur par son ID
-router.delete('/teachers/:teacherId/modules/:moduleId', teacherModuleController.deleteModuleForTeacher);
 
 // Route pour récupérer les modules d'un étudiant
 router.get('/teachers/:teacherId/students/:studentId/modules', teacherStudentModuleController.getModulesForStudent);
 
-// Route to view a module for a student by a teacher
+// Route pour supprimer un module pour un professeur par son ID
+router.delete('/teachers/:teacherId/modules/:moduleId', teacherModuleController.deleteModuleForTeacher);
+
+// Route pour afficher un module pour un étudiant par un enseignant
 router.get('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.getModuleForStudent);
 
-// Route to update a module for a student by a teacher
+// Route pour mettre à jour un module pour un étudiant par un enseignant
 router.put('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.updateModuleForStudent);
 
-// Route to delete a module for a student by a teacher
+// Route pour supprimer un module pour un étudiant par un enseignant
 router.delete('/teachers/:teacherId/students/:studentId/modules/:moduleId', teacherAuth, teacherStudentModuleController.deleteModuleForStudent);
 
 

@@ -8,7 +8,7 @@ const teacherSchema = new mongoose.Schema({
   teacherGroup: { type: String, required: true },
   modules: [
     {
-      moduleName: { type: String, required: true }, // Changed module_name to moduleName
+      moduleName: { type: String, required: true },
       description: { type: String, required: true },
     },
   ],

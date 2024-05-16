@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const studentController = require('../controllers/studentController');
 const studentModuleController = require('../controllers/studentModuleController');
-const { validateUserInput } = require('../middleware/userValidation'); // Import the student validation middleware
+const { validateUserInput } = require('../middleware/userValidation'); // Importer le middleware de validation des étudiants
 
 // Route pour créer un nouvel étudiant
 router.post('/students', validateUserInput, studentController.createStudent);

@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(bodyParser.json());
-app.use(express.json()); // This line adds middleware to parse JSON bodies
+app.use(express.json()); // Cette ligne ajoute un middleware pour analyser les corps JSON
 
 // Connexion à la base de données
 connectDB();
@@ -22,9 +22,9 @@ app.use('/xchange/api/', teacherRoutes);
 // Routes pour les étudiants
 app.use('/xchange/api/', studentRoutes);
 
-// Gestion des erreurs 404 (Not Found)
+// Gestion des erreurs 404 (Non trouvé)
 app.use((req, res, next) => {
-  const error = new Error('Not Found');
+  const error = new Error('Non trouvé');
   error.status = 404;
   next(error);
 });
@@ -41,5 +41,5 @@ app.use((err, req, res, next) => {
 
 // Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`Le serveur fonctionne sur le port ${PORT}`);
 });

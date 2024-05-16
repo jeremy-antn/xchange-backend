@@ -10,7 +10,7 @@ exports.createStudent = async (req, res, next) => {
 
     const existingStudent = await Student.findOne({ email });
     if (existingStudent) {
-      return res.status(400).json({ message: 'Email already exists' });
+      return res.status(400).json({ message: 'L\'email existe déjà' });
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,7 +30,7 @@ exports.createStudent = async (req, res, next) => {
     delete studentResponse.__v;
 
     res.status(201).json({
-      message: 'Student account created successfully.',
+      message: 'Compte étudiant créé avec succès.',
       student: studentResponse
     });
   } catch (error) {
@@ -53,7 +53,7 @@ exports.getStudentById = async (req, res, next) => {
   try {
     const student = await Student.findById(req.params.id, '-password -__v');
     if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: 'Étudiant introuvable' });
     }
     res.status(200).json(student);
   } catch (error) {
@@ -72,9 +72,9 @@ exports.updateStudent = async (req, res, next) => {
       studentGroup
     }, { new: true, select: '-password -__v' });
     if (!updatedStudent) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: 'Étudiant introuvable' });
     }
-    res.status(200).json({ message: 'Student updated successfully', student: updatedStudent });
+    res.status(200).json({ message: 'Étudiant mis à jour avec succès', student: updatedStudent });
   } catch (error) {
     next(error);
   }
@@ -85,9 +85,9 @@ exports.deleteStudent = async (req, res, next) => {
   try {
     const deletedStudent = await Student.findByIdAndDelete(req.params.id);
     if (!deletedStudent) {
-      return res.status(404).json({ message: 'Student not found' });
+      return res.status(404).json({ message: 'Étudiant introuvable' });
     }
-    res.status(200).json({ message: 'Student deleted successfully'});
+    res.status(200).json({ message: 'Étudiant supprimé avec succès'});
   } catch (error) {
     next(error);
   }
