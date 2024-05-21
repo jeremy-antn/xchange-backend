@@ -37,7 +37,7 @@ function validateUserInput(req, res, next) {
 const checkUniqueModuleName = (role) => async (req, res, next) => {
   try {
     const { userId } = req.query; // Extraire userId des paramètres de la requête
-    const { moduleName } = req.body;
+    const modulesData = req.body.modules; // Supposons que les données des modules soient envoyées dans un tableau nommé 'modules'
 
     // Trouver l'utilisateur par ID en fonction du rôle
     let User;
@@ -49,25 +49,28 @@ const checkUniqueModuleName = (role) => async (req, res, next) => {
       return res.status(400).json({ message: 'Rôle spécifié invalide' });
     }
 
-    // Vérifier si un module avec le même nom existe pour l'utilisateur
-    const user = await User.findById(userId);
+    // Trouver l'utilisateur par ID
+    const user = await User.findById(userId).populate('modules');
     if (!user) {
       return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} introuvable` });
     }
 
-    const existingModule = user.modules.find(module => module.moduleName === moduleName);
-    if (existingModule) {
+    // Si les données des modules ne sont pas envoyées sous forme de tableau, les convertir en tableau pour simplifier le traitement
+    if (!Array.isArray(modulesData)) {
+      modulesData = [modulesData];
+    }
 
-      if (role === 'teacher') {
-        return res.status(400).json({ message: "Le nom du module doit être unique pour l'utilisateur" });
-      }
+    // Vérifier si un module avec le même nom existe pour l'utilisateur
+    for (const moduleData of modulesData) {
+      const { moduleName } = moduleData;
+      const existingModule = user.modules.find(module => module.moduleName === moduleName);
 
-      else {
-        return next();
+      if (existingModule) {
+        return res.status(400).json({ message: `Le nom du module "${moduleName}" doit être unique pour l'utilisateur` });
       }
     }
 
-   // Si le nom du module est unique, passer au middleware suivant ou au contrôleur
+    // Si le nom du module est unique, passer au middleware suivant ou au contrôleur
     next();
   } catch (error) {
     next(error);
